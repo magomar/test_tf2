@@ -1,9 +1,12 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import os
+import sys
+
+import matplotlib.pyplot as plt
+import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-import numpy as np
-import matplotlib.pyplot as plt
 
 class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
                'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
@@ -27,7 +30,7 @@ def plot_image(i, predictions_array, true_label, img):
         color = 'red'
 
     plt.xlabel("{} {:2.0f}% ({})".format(class_names[predicted_label],
-                                         100*np.max(predictions_array),
+                                         100 * np.max(predictions_array),
                                          class_names[true_label]),
                color=color)
 
@@ -46,7 +49,21 @@ def plot_value_array(i, predictions_array, true_label):
 
 
 def main():
-    print(tf.__version__)
+    print(f'Tensorflow version: {tf.__version__}')
+    v = sys.version_info
+    print(f'Running under Python {v[0]}.{v[1]}.{v[2]}')
+    print('Paths: ' + '\n'.join(sys.path))
+    dirpath = os.getcwd()
+    print(f'Current directory is {dirpath}')
+    foldername = os.path.basename(dirpath)
+    print(f'Directory name is {foldername}')
+    print(f'Eager execution: {tf.executing_eagerly()}')
+    tf_cuda_support = tf.test.is_built_with_cuda()
+    gpu_available = len(tf.config.list_physical_devices('GPU'))
+
+    print(f'Cuda support: {tf_cuda_support}')
+    print(f'GPU available: {gpu_available}')
+
     fashion_mnist = keras.datasets.fashion_mnist
     (train_images, train_labels), (test_images,
                                    test_labels) = fashion_mnist.load_data()
@@ -88,12 +105,12 @@ def main():
     # Color correct predictions in blue, incorrect predictions in red
     num_rows = 5
     num_cols = 3
-    num_images = num_rows*num_cols
-    plt.figure(figsize=(2*2*num_cols, 2*num_rows))
+    num_images = num_rows * num_cols
+    plt.figure(figsize=(2 * 2 * num_cols, 2 * num_rows))
     for i in range(num_images):
-        plt.subplot(num_rows, 2*num_cols, 2*i+1)
+        plt.subplot(num_rows, 2 * num_cols, 2 * i + 1)
         plot_image(i, predictions, test_labels, test_images)
-        plt.subplot(num_rows, 2*num_cols, 2*i+2)
+        plt.subplot(num_rows, 2 * num_cols, 2 * i + 2)
         plot_value_array(i, predictions, test_labels)
     plt.show()
 
