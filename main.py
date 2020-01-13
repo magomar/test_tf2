@@ -21,7 +21,7 @@ def plot_image(i, predictions_array, true_label, img):
     plt.xticks([])
     plt.yticks([])
 
-    plt.imshow(img, cmap=plt.cm.binary)
+    plt.imshow(tf.squeeze(img), cmap=plt.cm.binary)
 
     predicted_label = np.argmax(predictions_array)
     if predicted_label == true_label:
@@ -59,10 +59,13 @@ def main():
     print(f'Directory name is {foldername}')
     print(f'Eager execution: {tf.executing_eagerly()}')
     tf_cuda_support = tf.test.is_built_with_cuda()
-    gpu_available = len(tf.config.list_physical_devices('GPU'))
+    gpus_available = tf.config.list_physical_devices('GPU')
 
     print(f'Cuda support: {tf_cuda_support}')
-    print(f'GPU available: {gpu_available}')
+    print(f'GPU available: {len(gpus_available) if gpus_available else 0}')
+
+    if gpus_available:
+        config = tf.config.experimental.set_memory_growth(gpus_available[0], True)
 
     fashion_mnist = keras.datasets.fashion_mnist
     (train_images, train_labels), (test_images,
